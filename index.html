@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Ventas - Bufet</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- SheetJS para exportar a Excel fácilmente -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    .tab-active {
+      background-color: #c2410c;
+      color: #ffffff;
+    }
+
+    .tab-inactive {
+      background-color: #ffedd5;
+      color: #9a3412;
+    }
+
+    .tab-inactive:hover {
+      background-color: #fed7aa;
+    }
+  </style>
+</head>
+
+<body class="bg-amber-50 text-stone-800 min-h-screen p-3 sm:p-6 font-sans">
+
+  <div class="max-w-5xl mx-auto bg-orange-100/70 border border-amber-200 rounded-2xl shadow-xl overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-amber-800 text-amber-50 p-5 sm:p-6 text-center shadow-sm relative">
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-wide">Caja Bufet</h1>
+      <p class="text-amber-200 text-xs sm:text-sm mt-1">Gestión de Ventas y Arqueo en Tiempo Real</p>
+    </header>
+
+    <!-- Navegación por Pestañas -->
+    <div class="flex border-b border-amber-200 bg-amber-100/50 p-2 gap-2">
+      <button id="tabRegisterBtn" onclick="switchTab('register')"
+        class="flex-1 py-2.5 px-4 rounded-xl font-bold text-sm sm:text-base transition tab-active flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Registrar Venta
+      </button>
+      <button id="tabVerifyBtn" onclick="switchTab('verify')"
+        class="flex-1 py-2.5 px-4 rounded-xl font-bold text-sm sm:text-base transition tab-inactive flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+          </path>
+        </svg>
+        Verificar y Editar
+        <span id="badgeCount" class="bg-amber-700 text-white text-xs px-2 py-0.5 rounded-full ml-1">0</span>
+      </button>
+    </div>
+
+    <!-- Pestaña 1: REGISTRO DE VENTAS -->
+    <div id="tabRegister" class="p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Panel de Carga / Botones Rápidos -->
+      <div class="lg:col-span-7 space-y-5">
+
+        <!-- Productos Rápidos -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-amber-100">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-amber-900 mb-3 flex items-center gap-1.5">
+            <span>🏷️</span> Productos Individuales
+          </h2>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button onclick="quickAdd('Pancho', 2000)"
+              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Pancho
+              <br><span class="text-amber-700 font-bold text-sm">$2.000</span></button>
+            <button onclick="quickAdd('Vaso de Gaseosa', 500)"
+              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Vaso
+              Gaseosa
+              <br><span class="text-amber-700 font-bold text-sm">$500</span></button>
+            <button onclick="quickAdd('Donitas', 3000)"
+              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Donitas
+              <br><span class="text-amber-700 font-bold text-sm">$3.000</span></button>
+            <button onclick="quickAdd('Bizcocho', 1000)"
+              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Bizcocho
+              <br><span class="text-amber-700 font-bold text-sm">$1.000</span></button>
+            <button onclick="quickAdd('Muffin', 800)"
+              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Muffin
+              <br><span class="text-amber-700 font-bold text-sm">$800</span></button>
+            <button onclick="quickAdd('Caramelo', 1000)"
+              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Caramelo
+              <br><span class="text-amber-700 font-bold text-sm">$1.000</span></button>
+            <button onclick="quickAdd('Gomitas', 1000)"
+              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Gomitas
+              <br><span class="text-amber-700 font-bold text-sm">$1.000</span></button>
+            <button onclick="quickAdd('Jugo', 2000)"
+              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Jugo
+              <br><span class="text-amber-700 font-bold text-sm">$2.000</span></button>
+            <button onclick="quickAdd('Turrón', 1000)"
+              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Turrón
+              <br><span class="text-amber-700 font-bold text-sm">$1.000</span></button>
+            <button onclick="quickAdd('Pochoclos', 2000)"
+              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Pochoclos
+              <br><span class="text-amber-700 font-bold text-sm">$2.000</span></button>
+          </div>
+        </div>
+
+        <!-- Promociones Rápidas -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-amber-100">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-orange-900 mb-3 flex items-center gap-1.5">
+            <span>🔥</span> Promociones y Combos
+          </h2>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="quickAdd('Combo 2 Panchos', 3000)"
+              class="p-2.5 bg-orange-50 hover:bg-orange-100 text-orange-950 rounded-lg font-medium text-xs text-left border border-orange-200 transition active:scale-95">Combo
+              2 Panchos
+              <br><span class="text-orange-700 font-bold text-sm">$3.000</span></button>
+            <button onclick="quickAdd('Combo 2 Panchos + 2 Gaseosas', 4000)"
+              class="p-2.5 bg-orange-50 hover:bg-orange-100 text-orange-950 rounded-lg font-medium text-xs text-left border border-orange-200 transition active:scale-95">2
+              Panchos + 2 Gaseosas
+              <br><span class="text-orange-700 font-bold text-sm">$4.000</span></button>
+            <button onclick="quickAdd('Promo Caramelos (2x)', 1500)"
+              class="p-2.5 bg-orange-50 hover:bg-orange-100 text-orange-950 rounded-lg font-medium text-xs text-left border border-orange-200 transition active:scale-95">2x
+              Caramelos <br><span class="text-orange-700 font-bold text-sm">$1.500</span></button>
+            <button onclick="quickAdd('Promo Gomitas (2x)', 1500)"
+              class="p-2.5 bg-orange-50 hover:bg-orange-100 text-orange-950 rounded-lg font-medium text-xs text-left border border-orange-200 transition active:scale-95">2x
+              Gomitas <br><span class="text-orange-700 font-bold text-sm">$1.500</span></button>
+            <button onclick="quickAdd('Promo Jugos (2x)', 3000)"
+              class="p-2.5 bg-orange-50 hover:bg-orange-100 text-orange-950 rounded-lg font-medium text-xs text-left border border-orange-200 transition active:scale-95">2x
+              Jugos <br><span class="text-orange-700 font-bold text-sm">$3.000</span></button>
+            <button onclick="quickAdd('Promo Pochoclos (2x)', 3000)"
+              class="p-2.5 bg-orange-50 hover:bg-orange-100 text-orange-950 rounded-lg font-medium text-xs text-left border border-orange-200 transition active:scale-95">2x
+              Pochoclos <br><span class="text-orange-700 font-bold text-sm">$3.000</span></button>
+          </div>
+        </div>
+
+        <!-- Formulario de Ingreso Manual -->
+        <form id="addToOrderForm" onsubmit="addToOrderFromForm(event)"
+          class="bg-white p-4 rounded-xl shadow-sm border border-amber-100 space-y-3">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-stone-600">Ingreso Manual de Producto</h2>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-stone-600 mb-1">Producto / Detalle</label>
+              <input type="text" id="productInput" required placeholder="Ej. Donitas"
+                class="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-stone-600 mb-1">Monto ($)</label>
+              <input type="number" id="amountInput" min="0" step="50" required placeholder="3000"
+                class="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+          </div>
+
+          <button type="submit"
+            class="w-full bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold py-2.5 rounded-xl border border-amber-200 shadow-sm transition active:scale-95 text-xs flex items-center justify-center gap-1.5">
+            <span>➕</span> Agregar a la Venta Actual
+          </button>
+        </form>
+
+      </div>
+
+      <!-- Resumen Lateral & Venta en Curso -->
+      <div class="lg:col-span-5 space-y-4 flex flex-col">
+
+        <!-- Panel Venta en Curso / Carrito -->
+        <div class="bg-white p-4 rounded-2xl shadow-md border-2 border-amber-300 space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b border-amber-100">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
+              <span>🛒</span> Venta Actual
+            </h2>
+            <button type="button" onclick="clearCurrentOrder()"
+              class="text-[11px] font-bold text-red-600 hover:underline">
+              Vaciar
+            </button>
+          </div>
+
+          <!-- Lista de Ítems -->
+          <div id="orderItemsList" class="max-h-44 overflow-y-auto space-y-2 py-1">
+            <p class="text-xs text-stone-400 text-center py-4">No hay productos agregados</p>
+          </div>
+
+          <!-- Subtotal Destacado -->
+          <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-center shadow-inner">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-amber-800 block">Subtotal a Cobrar</span>
+            <span id="orderSubtotal" class="text-3xl font-black text-amber-900">$0</span>
+          </div>
+
+          <!-- Medio de Pago -->
+          <div>
+            <label class="block text-[11px] font-bold text-stone-600 mb-1">Medio de Pago</label>
+            <div class="grid grid-cols-2 gap-2">
+              <label
+                class="flex items-center justify-center p-2 border rounded-lg cursor-pointer bg-stone-50 hover:bg-amber-50 has-[:checked]:bg-amber-700 has-[:checked]:text-white has-[:checked]:border-amber-700 transition text-xs font-bold">
+                <input type="radio" name="paymentType" value="Efectivo" checked class="sr-only">
+                💵 Efectivo
+              </label>
+              <label
+                class="flex items-center justify-center p-2 border rounded-lg cursor-pointer bg-stone-50 hover:bg-amber-50 has-[:checked]:bg-amber-700 has-[:checked]:text-white has-[:checked]:border-amber-700 transition text-xs font-bold">
+                <input type="radio" name="paymentType" value="Transferencia" class="sr-only">
+                📲 Transferencia
+              </label>
+            </div>
+          </div>
+
+          <button id="confirmOrderBtn" onclick="confirmOrder(event)" disabled
+            class="w-full bg-amber-700 hover:bg-amber-800 text-white font-extrabold py-3 rounded-xl shadow transition active:scale-95 text-sm opacity-50 cursor-not-allowed flex items-center justify-center gap-2">
+            💳 Confirmar y Cobrar
+          </button>
+        </div>
+
+        <!-- Tarjetas de Totales Acumulados -->
+        <div class="grid grid-cols-3 gap-2">
+          <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm text-center">
+            <span class="block text-[10px] uppercase font-bold text-stone-400">Total</span>
+            <span id="totalSum" class="text-base font-extrabold text-amber-800">$0</span>
+          </div>
+          <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm text-center">
+            <span class="block text-[10px] uppercase font-bold text-stone-400">Efectivo</span>
+            <span id="cashSum" class="text-base font-extrabold text-emerald-600">$0</span>
+          </div>
+          <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm text-center">
+            <span class="block text-[10px] uppercase font-bold text-stone-400">Transf.</span>
+            <span id="transferSum" class="text-base font-extrabold text-blue-600">$0</span>
+          </div>
+        </div>
+
+        <!-- Vista rápida del historial reciente -->
+        <div class="bg-white rounded-xl shadow-sm border border-amber-100 p-4 flex-1 flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-stone-700">Últimos Registros</h3>
+              <button onclick="switchTab('verify')" class="text-xs text-amber-700 hover:underline font-bold">Ver todos
+                →</button>
+            </div>
+
+            <div class="max-h-[220px] overflow-y-auto border-t border-stone-100 pt-2 space-y-2" id="recentSalesList">
+              <p class="text-xs text-stone-400 text-center py-6">No hay ventas registradas aún</p>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-stone-100">
+            <button onclick="exportToExcel()"
+              class="w-full bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold py-2.5 rounded-lg transition flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                </path>
+              </svg>
+              Descargar Planilla Excel
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Pestaña 2: VERIFICAR Y EDITAR -->
+    <div id="tabVerify" class="p-4 sm:p-6 hidden">
+      <div class="bg-white rounded-xl shadow-sm border border-amber-100 p-4 sm:p-6 space-y-4">
+
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-stone-100">
+          <div>
+            <h2 class="text-base font-bold text-stone-800">Planilla General de Comprobantes</h2>
+            <p class="text-xs text-stone-500">Revisa, corrige importes, cambia medios de pago o elimina registros
+              duplicados.</p>
+          </div>
+          <div class="flex gap-2 w-full sm:w-auto">
+            <button onclick="exportToExcel()"
+              class="flex-1 sm:flex-none px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg transition">
+              Exportar a Excel
+            </button>
+            <button onclick="clearSales()"
+              class="flex-1 sm:flex-none px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-lg transition border border-red-200">
+              Vaciar Caja
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabla Completa de Ventas -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-amber-50 text-amber-900 border-b border-amber-200 uppercase font-bold text-[11px]">
+                <th class="p-2.5">#</th>
+                <th class="p-2.5">Hora</th>
+                <th class="p-2.5">Producto / Concepto</th>
+                <th class="p-2.5">Medio de Pago</th>
+                <th class="p-2.5 text-right">Monto ($)</th>
+                <th class="p-2.5 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="fullSalesTable" class="divide-y divide-stone-100">
+              <!-- Renderizado dinámico -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal de Edición -->
+  <div id="editModal"
+    class="fixed inset-0 bg-stone-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl border border-amber-200 max-w-md w-full p-6 space-y-4">
+      <div class="flex justify-between items-center border-b pb-3 border-stone-100">
+        <h3 class="font-bold text-stone-800 text-base">Modificar Registro de Venta</h3>
+        <button onclick="closeEditModal()"
+          class="text-stone-400 hover:text-stone-600 font-bold text-lg">&times;</button>
+      </div>
+
+      <form id="editForm" onsubmit="saveEditSale(event)" class="space-y-4">
+        <input type="hidden" id="editIndex">
+
+        <div>
+          <label class="block text-xs font-medium text-stone-600 mb-1">Producto / Concepto</label>
+          <input type="text" id="editProductInput" required
+            class="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-stone-600 mb-1">Monto ($)</label>
+          <input type="number" id="editAmountInput" min="0" step="50" required
+            class="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-stone-600 mb-1">Medio de Pago</label>
+          <select id="editPaymentTypeInput"
+            class="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+            <option value="Efectivo">Efectivo</option>
+            <option value="Transferencia">Transferencia</option>
+          </select>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeEditModal()"
+            class="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-2 rounded-lg text-xs transition">
+            Cancelar
+          </button>
+          <button type="submit"
+            class="flex-1 bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 rounded-lg text-xs shadow transition">
+            Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYMw76DtcH-SwUm8xa-vvZ7ZH8txMF3o3AQSODC6RUK3jdsJPuSZZeUzBcWbh4OvjJ/exec";
+
+    // Función para enviar una sola venta a Google Sheets
+    function sendToSheets(saleData) {
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(saleData)
+      }).catch(err => console.error("Error al enviar a Sheets:", err));
+    }
+
+    // Función para resincronizar toda la planilla cuando edites o borres un registro
+    function syncAllToSheets(salesList) {
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: "syncAll", sales: salesList })
+      }).catch(err => console.error("Error al resincronizar Sheets:", err));
+    }
+
+    let sales = JSON.parse(localStorage.getItem('bufet_sales_v2')) || [];
+    let currentOrder = [];
+
+    function quickAdd(product, amount) {
+      addToOrder(product, amount, 1);
+    }
+
+    function addToOrderFromForm(e) {
+      e.preventDefault();
+      const productInput = document.getElementById('productInput');
+      const amountInput = document.getElementById('amountInput');
+      const product = productInput.value.trim();
+      const amount = parseFloat(amountInput.value);
+
+      if (!product || isNaN(amount) || amount <= 0) return;
+
+      addToOrder(product, amount, 1);
+
+      productInput.value = '';
+      amountInput.value = '';
+    }
+
+    function addToOrder(product, price, qty = 1) {
+      const existingItemIndex = currentOrder.findIndex(item => item.product === product && item.price === price);
+      if (existingItemIndex > -1) {
+        currentOrder[existingItemIndex].qty += qty;
+      } else {
+        currentOrder.push({ product, price, qty });
+      }
+      renderCurrentOrderUI();
+    }
+
+    function updateOrderQty(index, delta) {
+      if (currentOrder[index]) {
+        currentOrder[index].qty += delta;
+        if (currentOrder[index].qty <= 0) {
+          currentOrder.splice(index, 1);
+        }
+      }
+      renderCurrentOrderUI();
+    }
+
+    function removeFromOrder(index) {
+      if (currentOrder[index]) {
+        currentOrder.splice(index, 1);
+      }
+      renderCurrentOrderUI();
+    }
+
+    function clearCurrentOrder() {
+      currentOrder = [];
+      renderCurrentOrderUI();
+    }
+
+    function getCurrentOrderSubtotal() {
+      return currentOrder.reduce((acc, item) => acc + (item.price * item.qty), 0);
+    }
+
+    function renderCurrentOrderUI() {
+      const orderItemsList = document.getElementById('orderItemsList');
+      const orderSubtotalEl = document.getElementById('orderSubtotal');
+      const confirmOrderBtn = document.getElementById('confirmOrderBtn');
+
+      if (!orderItemsList || !orderSubtotalEl) return;
+
+      orderItemsList.innerHTML = '';
+
+      if (currentOrder.length === 0) {
+        orderItemsList.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">No hay productos agregados</p>';
+        orderSubtotalEl.textContent = '$0';
+        if (confirmOrderBtn) {
+          confirmOrderBtn.disabled = true;
+          confirmOrderBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+        return;
+      }
+
+      if (confirmOrderBtn) {
+        confirmOrderBtn.disabled = false;
+        confirmOrderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+
+      const subtotal = getCurrentOrderSubtotal();
+      orderSubtotalEl.textContent = `$${subtotal.toLocaleString('es-AR')}`;
+
+      currentOrder.forEach((item, idx) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'flex justify-between items-center bg-stone-50 border border-stone-200 p-2 rounded-lg text-xs';
+        itemEl.innerHTML = `
+          <div class="flex-1 min-w-0 pr-2">
+            <span class="font-bold text-stone-800 block truncate">${item.product}</span>
+            <span class="text-[10px] text-stone-500">$${item.price.toLocaleString('es-AR')} c/u</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <div class="flex items-center border border-stone-300 rounded bg-white overflow-hidden">
+              <button type="button" onclick="updateOrderQty(${idx}, -1)" class="px-2 py-0.5 text-stone-600 hover:bg-amber-100 font-bold">-</button>
+              <span class="px-2 font-bold text-stone-800 text-xs">${item.qty}</span>
+              <button type="button" onclick="updateOrderQty(${idx}, 1)" class="px-2 py-0.5 text-stone-600 hover:bg-amber-100 font-bold">+</button>
+            </div>
+            <span class="font-extrabold text-stone-900 w-16 text-right">$${(item.price * item.qty).toLocaleString('es-AR')}</span>
+            <button type="button" onclick="removeFromOrder(${idx})" class="text-red-500 hover:text-red-700 p-1 font-bold">🗑️</button>
+          </div>
+        `;
+        orderItemsList.appendChild(itemEl);
+      });
+    }
+
+    function confirmOrder(e) {
+      if (e) e.preventDefault();
+      if (currentOrder.length === 0) {
+        alert('Agrega al menos un producto a la venta antes de confirmar.');
+        return;
+      }
+
+      const paymentTypeInput = document.querySelector('input[name="paymentType"]:checked');
+      const paymentType = paymentTypeInput ? paymentTypeInput.value : 'Efectivo';
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const date = new Date().toLocaleDateString();
+
+      const totalAmount = getCurrentOrderSubtotal();
+
+      const productSummary = currentOrder
+        .map(item => item.qty > 1 ? `${item.qty}x ${item.product}` : item.product)
+        .join(', ');
+
+      const newSale = {
+        product: productSummary,
+        amount: totalAmount,
+        type: paymentType,
+        time: time,
+        date: date
+      };
+
+      sales.push(newSale);
+
+      clearCurrentOrder();
+      updateUI();
+      sendToSheets(newSale);
+    }
+
+    function switchTab(tab) {
+      const tabRegister = document.getElementById('tabRegister');
+      const tabVerify = document.getElementById('tabVerify');
+      const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+      const tabVerifyBtn = document.getElementById('tabVerifyBtn');
+
+      if (tab === 'register') {
+        tabRegister.classList.remove('hidden');
+        tabVerify.classList.add('hidden');
+        tabRegisterBtn.className = 'flex-1 py-2.5 px-4 rounded-xl font-bold text-sm sm:text-base transition tab-active flex items-center justify-center gap-2';
+        tabVerifyBtn.className = 'flex-1 py-2.5 px-4 rounded-xl font-bold text-sm sm:text-base transition tab-inactive flex items-center justify-center gap-2';
+      } else {
+        tabRegister.classList.add('hidden');
+        tabVerify.classList.remove('hidden');
+        tabRegisterBtn.className = 'flex-1 py-2.5 px-4 rounded-xl font-bold text-sm sm:text-base transition tab-inactive flex items-center justify-center gap-2';
+        tabVerifyBtn.className = 'flex-1 py-2.5 px-4 rounded-xl font-bold text-sm sm:text-base transition tab-active flex items-center justify-center gap-2';
+      }
+    }
+
+    function updateUI() {
+      const recentSalesList = document.getElementById('recentSalesList');
+      const fullSalesTable = document.getElementById('fullSalesTable');
+      const totalSumEl = document.getElementById('totalSum');
+      const cashSumEl = document.getElementById('cashSum');
+      const transferSumEl = document.getElementById('transferSum');
+      const badgeCountEl = document.getElementById('badgeCount');
+
+      recentSalesList.innerHTML = '';
+      fullSalesTable.innerHTML = '';
+
+      if (badgeCountEl) {
+        badgeCountEl.textContent = sales.length;
+      }
+
+      if (sales.length === 0) {
+        recentSalesList.innerHTML = '<p class="text-xs text-stone-400 text-center py-6">No hay ventas registradas aún</p>';
+        fullSalesTable.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-stone-400">No hay datos registrados en el sistema</td></tr>';
+      } else {
+        // Renderizar lista reciente (últimos 6)
+        sales.slice().reverse().slice(0, 6).forEach((sale) => {
+          const item = document.createElement('div');
+          item.className = 'flex justify-between items-center text-xs p-2 rounded bg-stone-50 border border-stone-100';
+          item.innerHTML = `
+            <div>
+              <span class="font-bold text-stone-700">${sale.product}</span>
+              <span class="block text-[10px] text-stone-400">${sale.time} • <span class="${sale.type === 'Efectivo' ? 'text-emerald-600 font-semibold' : 'text-blue-600 font-semibold'}">${sale.type}</span></span>
+            </div>
+            <span class="font-bold text-stone-800">$${sale.amount.toLocaleString('es-AR')}</span>
+          `;
+          recentSalesList.appendChild(item);
+        });
+
+        // Renderizar tabla completa para edición
+        sales.slice().reverse().forEach((sale, revIndex) => {
+          const realIndex = sales.length - 1 - revIndex;
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-amber-50/50 transition';
+          tr.innerHTML = `
+            <td class="p-2.5 font-bold text-stone-400">${realIndex + 1}</td>
+            <td class="p-2.5 text-stone-500">${sale.time}</td>
+            <td class="p-2.5 font-bold text-stone-800">${sale.product}</td>
+            <td class="p-2.5">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${sale.type === 'Efectivo' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">
+                ${sale.type}
+              </span>
+            </td>
+            <td class="p-2.5 text-right font-extrabold text-stone-800">$${sale.amount.toLocaleString('es-AR')}</td>
+            <td class="p-2.5 text-center space-x-1">
+              <button onclick="openEditModal(${realIndex})" class="px-2 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded font-bold transition text-[11px]">
+                ✏️ Editar
+              </button>
+              <button onclick="deleteSale(${realIndex})" class="px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded font-bold transition text-[11px]">
+                🗑️
+              </button>
+            </td>
+          `;
+          fullSalesTable.appendChild(tr);
+        });
+      }
+
+      // Totales
+      const totalSum = sales.reduce((acc, s) => acc + s.amount, 0);
+      const totalCash = sales.filter(s => s.type === 'Efectivo').reduce((acc, s) => acc + s.amount, 0);
+      const totalTransfer = sales.filter(s => s.type === 'Transferencia').reduce((acc, s) => acc + s.amount, 0);
+
+      totalSumEl.textContent = `$${totalSum.toLocaleString('es-AR')}`;
+      cashSumEl.textContent = `$${totalCash.toLocaleString('es-AR')}`;
+      transferSumEl.textContent = `$${totalTransfer.toLocaleString('es-AR')}`;
+
+      localStorage.setItem('bufet_sales_v2', JSON.stringify(sales));
+    }
+
+    function openEditModal(index) {
+      const sale = sales[index];
+      document.getElementById('editIndex').value = index;
+      document.getElementById('editProductInput').value = sale.product;
+      document.getElementById('editAmountInput').value = sale.amount;
+      document.getElementById('editPaymentTypeInput').value = sale.type;
+
+      document.getElementById('editModal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.add('hidden');
+    }
+
+    function saveEditSale(e) {
+      e.preventDefault();
+      const index = parseInt(document.getElementById('editIndex').value);
+      sales[index].product = document.getElementById('editProductInput').value;
+      sales[index].amount = parseFloat(document.getElementById('editAmountInput').value);
+      sales[index].type = document.getElementById('editPaymentTypeInput').value;
+
+      closeEditModal();
+      updateUI();
+      syncAllToSheets(sales);
+    }
+
+    function deleteSale(index) {
+      if (confirm(`¿Eliminar la venta de "${sales[index].product}" por $${sales[index].amount}?`)) {
+        sales.splice(index, 1);
+        updateUI();
+        syncAllToSheets(sales);
+      }
+    }
+
+    function exportToExcel() {
+      if (sales.length === 0) {
+        alert('No hay ventas registradas para exportar.');
+        return;
+      }
+
+      const dataToExport = sales.map((s, idx) => ({
+        'N°': idx + 1,
+        'Fecha': s.date,
+        'Hora': s.time,
+        'Producto / Detalle': s.product,
+        'Monto ($)': s.amount,
+        'Tipo de Pago': s.type
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Ventas Bufet");
+
+      XLSX.writeFile(workbook, `Ventas_Bufet_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    }
+
+    function clearSales() {
+      if (confirm('¿Estás seguro de reiniciar todos los registros del día?')) {
+        sales = [];
+        updateUI();
+        syncAllToSheets(sales);
+      }
+    }
+
+    // Inicializar
+    updateUI();
+    renderCurrentOrderUI();
+  </script>
+</body>
+
+</html>
