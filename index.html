@@ -228,10 +228,6 @@
               class="flex-1 sm:flex-none px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg transition">
               Exportar a Excel
             </button>
-            <button onclick="clearSales()"
-              class="flex-1 sm:flex-none px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-lg transition border border-red-200">
-              Vaciar Caja
-            </button>
           </div>
         </div>
 
@@ -822,6 +818,7 @@
       XLSX.writeFile(workbook, `Ventas_Bufet_${new Date().toISOString().slice(0, 10)}.xlsx`);
     }
 
+    // Sin botón en la pantalla a propósito: solo se usa a mano desde la consola (clearSales())
     function clearSales() {
       if (confirm('¿Estás seguro de reiniciar todos los registros del día?')) {
         sales = [];
