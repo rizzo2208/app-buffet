@@ -36,24 +36,33 @@
     </header>
 
     <!-- Navegación por Pestañas -->
-    <div class="flex border-b border-amber-200 bg-amber-100/50 p-2 gap-2">
+    <div class="flex border-b border-amber-200 bg-amber-100/50 p-2 gap-1.5 sm:gap-2">
       <button id="tabRegisterBtn" onclick="switchTab('register')"
-        class="flex-1 py-2.5 px-4 rounded-xl font-bold text-sm sm:text-base transition tab-active flex items-center justify-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        class="flex-1 py-2.5 px-1.5 sm:px-3 rounded-xl font-bold text-[11px] leading-tight sm:text-base min-w-0 transition tab-active flex items-center justify-center gap-2">
+        <svg class="w-5 h-5 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
         Registrar Venta
       </button>
       <button id="tabVerifyBtn" onclick="switchTab('verify')"
-        class="flex-1 py-2.5 px-4 rounded-xl font-bold text-sm sm:text-base transition tab-inactive flex items-center justify-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        class="flex-1 py-2.5 px-1.5 sm:px-3 rounded-xl font-bold text-[11px] leading-tight sm:text-base min-w-0 transition tab-inactive flex items-center justify-center gap-2">
+        <svg class="w-5 h-5 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
           </path>
         </svg>
         Verificar y Editar
-        <span id="badgeCount" class="bg-amber-700 text-white text-xs px-2 py-0.5 rounded-full ml-1">0</span>
+        <span id="badgeCount" class="bg-amber-700 text-white text-xs px-1.5 sm:px-2 py-0.5 rounded-full sm:ml-1">0</span>
+      </button>
+      <button id="tabCatalogBtn" onclick="switchTab('catalog')"
+        class="flex-1 py-2.5 px-1.5 sm:px-3 rounded-xl font-bold text-[11px] leading-tight sm:text-base min-w-0 transition tab-inactive flex items-center justify-center gap-1.5 sm:gap-2">
+        <svg class="w-5 h-5 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z">
+          </path>
+        </svg>
+        Catálogo
       </button>
     </div>
 
@@ -68,39 +77,7 @@
           <h2 class="text-xs font-bold uppercase tracking-wider text-amber-900 mb-3 flex items-center gap-1.5">
             <span>🏷️</span> Productos Individuales
           </h2>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <button onclick="quickAdd('Pancho', 2000)"
-              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Pancho
-              <br><span class="text-amber-700 font-bold text-sm">$2.000</span></button>
-            <button onclick="quickAdd('Vaso de Gaseosa', 500)"
-              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Vaso
-              Gaseosa
-              <br><span class="text-amber-700 font-bold text-sm">$500</span></button>
-            <button onclick="quickAdd('Donitas', 3000)"
-              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Donitas
-              <br><span class="text-amber-700 font-bold text-sm">$3.000</span></button>
-            <button onclick="quickAdd('Bizcocho', 1000)"
-              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Bizcocho
-              <br><span class="text-amber-700 font-bold text-sm">$1.000</span></button>
-            <button onclick="quickAdd('Muffin', 800)"
-              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Muffin
-              <br><span class="text-amber-700 font-bold text-sm">$800</span></button>
-            <button onclick="quickAdd('Caramelo', 1000)"
-              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Caramelo
-              <br><span class="text-amber-700 font-bold text-sm">$1.000</span></button>
-            <button onclick="quickAdd('Gomitas', 1000)"
-              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Gomitas
-              <br><span class="text-amber-700 font-bold text-sm">$1.000</span></button>
-            <button onclick="quickAdd('Jugo', 1500)"
-              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Jugo
-              <br><span class="text-amber-700 font-bold text-sm">$1.500</span></button>
-            <button onclick="quickAdd('Turrón', 500)"
-              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Turrón
-              <br><span class="text-amber-700 font-bold text-sm">$500</span></button>
-            <button onclick="quickAdd('Pochoclos', 2000)"
-              class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg font-medium text-xs text-left border border-amber-200 transition active:scale-95">Pochoclos
-              <br><span class="text-amber-700 font-bold text-sm">$2.000</span></button>
-          </div>
+          <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
         </div>
 
         <!-- Promociones Rápidas -->
@@ -108,28 +85,7 @@
           <h2 class="text-xs font-bold uppercase tracking-wider text-orange-900 mb-3 flex items-center gap-1.5">
             <span>🔥</span> Promociones y Combos
           </h2>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <button onclick="quickAdd('Promo Turrones (3x)', 1000)"
-              class="p-2.5 bg-orange-50 hover:bg-orange-100 text-orange-950 rounded-lg font-medium text-xs text-left border border-orange-200 transition active:scale-95">3x
-              Turrones
-              <br><span class="text-orange-700 font-bold text-sm">$1.000</span></button>
-            <button onclick="quickAdd('Combo 2 Panchos', 3000)"
-              class="p-2.5 bg-orange-50 hover:bg-orange-100 text-orange-950 rounded-lg font-medium text-xs text-left border border-orange-200 transition active:scale-95">Combo
-              2 Panchos
-              <br><span class="text-orange-700 font-bold text-sm">$3.000</span></button>
-            <button onclick="quickAdd('Promo Caramelos (2x)', 1500)"
-              class="p-2.5 bg-orange-50 hover:bg-orange-100 text-orange-950 rounded-lg font-medium text-xs text-left border border-orange-200 transition active:scale-95">2x
-              Caramelos
-              <br><span class="text-orange-700 font-bold text-sm">$1.500</span></button>
-            <button onclick="quickAdd('Promo Gomitas (2x)', 1500)"
-              class="p-2.5 bg-orange-50 hover:bg-orange-100 text-orange-950 rounded-lg font-medium text-xs text-left border border-orange-200 transition active:scale-95">2x
-              Gomitas
-              <br><span class="text-orange-700 font-bold text-sm">$1.500</span></button>
-            <button onclick="quickAdd('Promo Pochoclos (2x)', 3000)"
-              class="p-2.5 bg-orange-50 hover:bg-orange-100 text-orange-950 rounded-lg font-medium text-xs text-left border border-orange-200 transition active:scale-95">2x
-              Pochoclos
-              <br><span class="text-orange-700 font-bold text-sm">$3.000</span></button>
-          </div>
+          <div id="promoGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
         </div>
 
         <!-- Formulario de Ingreso Manual -->
@@ -299,6 +255,48 @@
       </div>
     </div>
 
+    <!-- Pestaña 3: CATÁLOGO -->
+    <div id="tabCatalog" class="p-4 sm:p-6 hidden">
+      <div class="space-y-5">
+
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-amber-100 space-y-3">
+          <div class="flex justify-between items-center">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
+              <span>🏷️</span> Productos
+            </h2>
+            <button onclick="openCatalogModal('products')"
+              class="px-3 py-1.5 bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold rounded-lg transition">
+              ➕ Nuevo producto
+            </button>
+          </div>
+          <div id="catalogProductsList" class="divide-y divide-stone-100"></div>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-amber-100 space-y-3">
+          <div class="flex justify-between items-center">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-orange-900 flex items-center gap-1.5">
+              <span>🔥</span> Promociones y Combos
+            </h2>
+            <button onclick="openCatalogModal('promos')"
+              class="px-3 py-1.5 bg-orange-700 hover:bg-orange-800 text-white text-xs font-bold rounded-lg transition">
+              ➕ Nueva promoción
+            </button>
+          </div>
+          <div id="catalogPromosList" class="divide-y divide-stone-100"></div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+          <p class="text-xs text-stone-500">Los cambios se guardan en este dispositivo y se reflejan al instante en
+            «Registrar Venta». Las ventas ya registradas no se modifican.</p>
+          <button onclick="resetCatalog()"
+            class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-lg transition border border-red-200 whitespace-nowrap">
+            Restaurar catálogo original
+          </button>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 
   <!-- Modal de Edición -->
@@ -343,6 +341,46 @@
           <button type="submit"
             class="flex-1 bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 rounded-lg text-xs shadow transition">
             Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Catálogo (producto / promoción) -->
+  <div id="catalogModal"
+    class="fixed inset-0 bg-stone-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl border border-amber-200 max-w-md w-full p-6 space-y-4">
+      <div class="flex justify-between items-center border-b pb-3 border-stone-100">
+        <h3 id="catalogModalTitle" class="font-bold text-stone-800 text-base">Nuevo producto</h3>
+        <button onclick="closeCatalogModal()"
+          class="text-stone-400 hover:text-stone-600 font-bold text-lg">&times;</button>
+      </div>
+
+      <form id="catalogForm" onsubmit="saveCatalogItem(event)" class="space-y-4">
+        <input type="hidden" id="catalogKind">
+        <input type="hidden" id="catalogId">
+
+        <div>
+          <label class="block text-xs font-medium text-stone-600 mb-1">Nombre</label>
+          <input type="text" id="catalogNameInput" required maxlength="60"
+            class="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-stone-600 mb-1">Precio ($)</label>
+          <input type="number" id="catalogPriceInput" min="1" step="any" required
+            class="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeCatalogModal()"
+            class="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-2 rounded-lg text-xs transition">
+            Cancelar
+          </button>
+          <button type="submit"
+            class="flex-1 bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 rounded-lg text-xs shadow transition">
+            Guardar
           </button>
         </div>
       </form>
@@ -462,7 +500,7 @@
         itemEl.className = 'flex justify-between items-center bg-stone-50 border border-stone-200 p-2 rounded-lg text-xs';
         itemEl.innerHTML = `
           <div class="flex-1 min-w-0 pr-2">
-            <span class="font-bold text-stone-800 block truncate">${item.product}</span>
+            <span class="font-bold text-stone-800 block truncate">${esc(item.product)}</span>
             <span class="text-[10px] text-stone-500">$${item.price.toLocaleString('es-AR')} c/u</span>
           </div>
           <div class="flex items-center gap-1.5">
@@ -512,23 +550,18 @@
       sendToSheets(newSale);
     }
 
-    function switchTab(tab) {
-      const tabRegister = document.getElementById('tabRegister');
-      const tabVerify = document.getElementById('tabVerify');
-      const tabRegisterBtn = document.getElementById('tabRegisterBtn');
-      const tabVerifyBtn = document.getElementById('tabVerifyBtn');
+    const TABS = {
+      register: { panel: 'tabRegister', btn: 'tabRegisterBtn' },
+      verify: { panel: 'tabVerify', btn: 'tabVerifyBtn' },
+      catalog: { panel: 'tabCatalog', btn: 'tabCatalogBtn' }
+    };
 
-      if (tab === 'register') {
-        tabRegister.classList.remove('hidden');
-        tabVerify.classList.add('hidden');
-        tabRegisterBtn.className = 'flex-1 py-2.5 px-4 rounded-xl font-bold text-sm sm:text-base transition tab-active flex items-center justify-center gap-2';
-        tabVerifyBtn.className = 'flex-1 py-2.5 px-4 rounded-xl font-bold text-sm sm:text-base transition tab-inactive flex items-center justify-center gap-2';
-      } else {
-        tabRegister.classList.add('hidden');
-        tabVerify.classList.remove('hidden');
-        tabRegisterBtn.className = 'flex-1 py-2.5 px-4 rounded-xl font-bold text-sm sm:text-base transition tab-inactive flex items-center justify-center gap-2';
-        tabVerifyBtn.className = 'flex-1 py-2.5 px-4 rounded-xl font-bold text-sm sm:text-base transition tab-active flex items-center justify-center gap-2';
-      }
+    function switchTab(tab) {
+      Object.keys(TABS).forEach(key => {
+        const active = key === tab;
+        document.getElementById(TABS[key].panel).classList.toggle('hidden', !active);
+        document.getElementById(TABS[key].btn).className = 'flex-1 py-2.5 px-1.5 sm:px-3 rounded-xl font-bold text-[11px] leading-tight sm:text-base min-w-0 transition flex items-center justify-center gap-1.5 sm:gap-2 ' + (active ? 'tab-active' : 'tab-inactive');
+      });
     }
 
     function updateUI() {
@@ -556,7 +589,7 @@
           item.className = 'flex justify-between items-center text-xs p-2 rounded bg-stone-50 border border-stone-100';
           item.innerHTML = `
             <div>
-              <span class="font-bold text-stone-700">${sale.product}</span>
+              <span class="font-bold text-stone-700">${esc(sale.product)}</span>
               <span class="block text-[10px] text-stone-400">${sale.time} • <span class="${sale.type === 'Efectivo' ? 'text-emerald-600 font-semibold' : 'text-blue-600 font-semibold'}">${sale.type}</span></span>
             </div>
             <span class="font-bold text-stone-800">$${sale.amount.toLocaleString('es-AR')}</span>
@@ -572,7 +605,7 @@
           tr.innerHTML = `
             <td class="p-2.5 font-bold text-stone-400">${realIndex + 1}</td>
             <td class="p-2.5 text-stone-500">${sale.time}</td>
-            <td class="p-2.5 font-bold text-stone-800">${sale.product}</td>
+            <td class="p-2.5 font-bold text-stone-800">${esc(sale.product)}</td>
             <td class="p-2.5">
               <span class="px-2 py-0.5 rounded text-[10px] font-bold ${sale.type === 'Efectivo' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">
                 ${sale.type}
@@ -668,7 +701,158 @@
       }
     }
 
+    // ===== CATÁLOGO (productos y promociones editables) =====
+    const CATALOG_KEY = 'bufet_catalog_v1';
+    const DEFAULT_CATALOG = {
+      products: [
+        { id: 'p1', name: 'Pancho', price: 2000 },
+        { id: 'p2', name: 'Vaso de Gaseosa', price: 500 },
+        { id: 'p3', name: 'Donitas', price: 3000 },
+        { id: 'p4', name: 'Bizcocho', price: 1000 },
+        { id: 'p5', name: 'Muffin', price: 800 },
+        { id: 'p6', name: 'Caramelo', price: 1000 },
+        { id: 'p7', name: 'Gomitas', price: 1000 },
+        { id: 'p8', name: 'Jugo', price: 1500 },
+        { id: 'p9', name: 'Turrón', price: 500 },
+        { id: 'p10', name: 'Pochoclos', price: 2000 }
+      ],
+      promos: [
+        { id: 'c1', name: 'Promo Turrones (3x)', price: 1000 },
+        { id: 'c2', name: 'Combo 2 Panchos', price: 3000 },
+        { id: 'c3', name: 'Promo Caramelos (2x)', price: 1500 },
+        { id: 'c4', name: 'Promo Gomitas (2x)', price: 1500 },
+        { id: 'c5', name: 'Promo Pochoclos (2x)', price: 3000 }
+      ]
+    };
+
+    function loadCatalog() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(CATALOG_KEY));
+        if (saved && Array.isArray(saved.products) && Array.isArray(saved.promos)) return saved;
+      } catch (err) { /* catálogo corrupto: se usa el original */ }
+      return JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+    }
+
+    let catalog = loadCatalog();
+
+    function saveCatalog() {
+      localStorage.setItem(CATALOG_KEY, JSON.stringify(catalog));
+      renderCatalog();
+    }
+
+    function esc(text) {
+      return String(text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    const money = n => `$${Number(n).toLocaleString('es-AR')}`;
+
+    const QUICK_BTN_STYLES = {
+      products: { btn: 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-200', price: 'text-amber-700' },
+      promos: { btn: 'bg-orange-50 hover:bg-orange-100 text-orange-950 border-orange-200', price: 'text-orange-700' }
+    };
+
+    function renderQuickButtons(kind, gridId, emptyText) {
+      const grid = document.getElementById(gridId);
+      const style = QUICK_BTN_STYLES[kind];
+      grid.innerHTML = '';
+      if (catalog[kind].length === 0) {
+        grid.innerHTML = `<p class="col-span-full text-xs text-stone-400 text-center py-3">${emptyText}</p>`;
+        return;
+      }
+      catalog[kind].forEach(item => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `p-2.5 ${style.btn} rounded-lg font-medium text-xs text-left border transition active:scale-95`;
+        btn.innerHTML = `${esc(item.name)}<br><span class="${style.price} font-bold text-sm">${money(item.price)}</span>`;
+        btn.addEventListener('click', () => quickAdd(item.name, item.price));
+        grid.appendChild(btn);
+      });
+    }
+
+    function renderCatalogList(kind, listId, emptyText) {
+      const list = document.getElementById(listId);
+      list.innerHTML = '';
+      if (catalog[kind].length === 0) {
+        list.innerHTML = `<p class="text-xs text-stone-400 text-center py-4">${emptyText}</p>`;
+        return;
+      }
+      catalog[kind].forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between gap-2 py-2 text-xs';
+        row.innerHTML = `
+          <div class="flex-1 min-w-0">
+            <span class="font-bold text-stone-800 block truncate">${esc(item.name)}</span>
+            <span class="text-stone-500">${money(item.price)}</span>
+          </div>
+          <div class="flex gap-1">
+            <button type="button" data-action="edit" class="px-2 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded font-bold transition text-[11px]">✏️ Editar</button>
+            <button type="button" data-action="delete" class="px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded font-bold transition text-[11px]">🗑️</button>
+          </div>`;
+        row.querySelector('[data-action="edit"]').addEventListener('click', () => openCatalogModal(kind, item.id));
+        row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteCatalogItem(kind, item.id));
+        list.appendChild(row);
+      });
+    }
+
+    function renderCatalog() {
+      renderQuickButtons('products', 'productGrid', 'No hay productos. Agregalos desde la pestaña Catálogo.');
+      renderQuickButtons('promos', 'promoGrid', 'No hay promociones. Agregalas desde la pestaña Catálogo.');
+      renderCatalogList('products', 'catalogProductsList', 'Todavía no cargaste productos.');
+      renderCatalogList('promos', 'catalogPromosList', 'Todavía no cargaste promociones.');
+    }
+
+    function openCatalogModal(kind, id) {
+      const item = id ? catalog[kind].find(i => i.id === id) : null;
+      const label = kind === 'products' ? 'producto' : 'promoción';
+      document.getElementById('catalogModalTitle').textContent = item ? `Editar ${label}` : (kind === 'products' ? 'Nuevo producto' : 'Nueva promoción');
+      document.getElementById('catalogKind').value = kind;
+      document.getElementById('catalogId').value = item ? item.id : '';
+      document.getElementById('catalogNameInput').value = item ? item.name : '';
+      document.getElementById('catalogPriceInput').value = item ? item.price : '';
+      document.getElementById('catalogModal').classList.remove('hidden');
+      document.getElementById('catalogNameInput').focus();
+    }
+
+    function closeCatalogModal() {
+      document.getElementById('catalogModal').classList.add('hidden');
+    }
+
+    function saveCatalogItem(e) {
+      e.preventDefault();
+      const kind = document.getElementById('catalogKind').value;
+      const id = document.getElementById('catalogId').value;
+      const name = document.getElementById('catalogNameInput').value.trim();
+      const price = parseFloat(document.getElementById('catalogPriceInput').value);
+      if (!name || isNaN(price) || price <= 0) return;
+
+      if (id) {
+        const item = catalog[kind].find(i => i.id === id);
+        if (item) { item.name = name; item.price = price; }
+      } else {
+        catalog[kind].push({ id: 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, price });
+      }
+      closeCatalogModal();
+      saveCatalog();
+    }
+
+    function deleteCatalogItem(kind, id) {
+      const item = catalog[kind].find(i => i.id === id);
+      if (!item) return;
+      if (confirm(`¿Eliminar "${item.name}" del catálogo? Las ventas ya registradas no se modifican.`)) {
+        catalog[kind] = catalog[kind].filter(i => i.id !== id);
+        saveCatalog();
+      }
+    }
+
+    function resetCatalog() {
+      if (confirm('¿Restaurar los productos y promociones originales? Se perderán los cambios hechos en el catálogo.')) {
+        catalog = JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+        saveCatalog();
+      }
+    }
+
     // Inicializar
+    renderCatalog();
     updateUI();
     renderCurrentOrderUI();
   </script>
