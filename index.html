@@ -33,6 +33,8 @@
     <header class="bg-amber-800 text-amber-50 p-5 sm:p-6 text-center shadow-sm relative">
       <h1 class="text-2xl sm:text-3xl font-extrabold tracking-wide">Caja Bufet</h1>
       <p class="text-amber-200 text-xs sm:text-sm mt-1">Gestión de Ventas y Arqueo en Tiempo Real</p>
+      <button id="syncStatus" type="button" onclick="refreshFromSheets()"
+        class="text-amber-200/90 text-[11px] mt-1 hover:underline">Conectando con la planilla…</button>
     </header>
 
     <!-- Navegación por Pestañas -->
@@ -286,8 +288,8 @@
         </div>
 
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-          <p class="text-xs text-stone-500">Los cambios se guardan en este dispositivo y se reflejan al instante en
-            «Registrar Venta». Las ventas ya registradas no se modifican.</p>
+          <p class="text-xs text-stone-500">Los cambios se guardan en la planilla de Google y se reflejan en todos los dispositivos
+            (puede tardar hasta 15 segundos). Las ventas ya registradas no se modifican.</p>
           <button onclick="resetCatalog()"
             class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-lg transition border border-red-200 whitespace-nowrap">
             Restaurar catálogo original
@@ -390,24 +392,151 @@
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYMw76DtcH-SwUm8xa-vvZ7ZH8txMF3o3AQSODC6RUK3jdsJPuSZZeUzBcWbh4OvjJ/exec";
 
-    // Función para enviar una sola venta a Google Sheets
-    function sendToSheets(saleData) {
-      fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(saleData)
-      }).catch(err => console.error("Error al enviar a Sheets:", err));
+    // ===== SINCRONIZACIÓN: la planilla de Google es la base compartida entre dispositivos =====
+    // - Cada venta se agrega a la planilla; editar/borrar/vaciar reenvía la lista completa.
+    // - Cada 15 s (y al volver a abrir la app) se lee la planilla y se actualiza la pantalla.
+    // - Sin conexión: lo local queda guardado y se reenvía solo al reconectar.
+    const POLL_MS = 15000;
+
+    function readStored(key, fallback) {
+      try { const v = JSON.parse(localStorage.getItem(key)); return v === null || v === undefined ? fallback : v; }
+      catch (err) { return fallback; }
     }
 
-    // Función para resincronizar toda la planilla cuando edites o borres un registro
+    let remoteReady = false;   // true cuando el script respondió bien al menos una vez
+    let inflight = 0;          // escrituras en curso
+    let writeSeq = 0;          // sube con cada cambio local (para descartar lecturas viejas)
+    let refreshing = false;
+    let outbox = readStored('bufet_outbox', []);                          // ventas aún no enviadas
+    let fullSyncPending = localStorage.getItem('bufet_fullsync') === '1'; // falta reenviar la lista completa
+    let catalogPending = localStorage.getItem('bufet_catalog_pending') === '1';
+
+    function persistSyncState() {
+      localStorage.setItem('bufet_outbox', JSON.stringify(outbox));
+      localStorage.setItem('bufet_fullsync', fullSyncPending ? '1' : '0');
+      localStorage.setItem('bufet_catalog_pending', catalogPending ? '1' : '0');
+    }
+
+    function setSyncStatus(ok) {
+      const el = document.getElementById('syncStatus');
+      if (!el) return;
+      if (ok) {
+        el.textContent = `☁️ Sincronizado ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · tocá para actualizar`;
+      } else {
+        el.textContent = '⚠️ Sin conexión con la planilla: se guarda acá y se envía al reconectar · tocá para reintentar';
+      }
+    }
+
+    async function postToSheets(payload) {
+      inflight++;
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        return true;
+      } catch (err) {
+        console.error('Error al enviar a Sheets:', err);
+        return false;
+      } finally {
+        inflight--;
+      }
+    }
+
+    // Enviar una sola venta a Google Sheets
+    function sendToSheets(saleData) {
+      writeSeq++;
+      postToSheets(saleData).then(ok => {
+        if (ok) { setTimeout(refreshFromSheets, 1500); return; }
+        outbox.push(saleData);
+        persistSyncState();
+        setSyncStatus(false);
+      });
+    }
+
+    // Reenviar toda la lista cuando se edita, borra o vacía un registro
     function syncAllToSheets(salesList) {
-      fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: "syncAll", sales: salesList })
-      }).catch(err => console.error("Error al resincronizar Sheets:", err));
+      writeSeq++;
+      fullSyncPending = true;
+      persistSyncState();
+      postToSheets({ action: 'syncAll', sales: salesList }).then(ok => {
+        if (ok) {
+          fullSyncPending = false;
+          outbox = [];
+          persistSyncState();
+          setTimeout(refreshFromSheets, 1500);
+        } else {
+          setSyncStatus(false);
+        }
+      });
+    }
+
+    function pushCatalog() {
+      writeSeq++;
+      catalogPending = true;
+      persistSyncState();
+      if (!remoteReady) return; // se enviará en la próxima lectura exitosa
+      postToSheets({ action: 'saveCatalog', catalog }).then(ok => {
+        if (ok) { catalogPending = false; persistSyncState(); } else { setSyncStatus(false); }
+      });
+    }
+
+    const salesKey = list => list.map(s => [s.date, s.time, s.product, s.amount, s.type].join('|')).join('\n');
+
+    function modalOpen() {
+      return !document.getElementById('editModal').classList.contains('hidden') ||
+        !document.getElementById('catalogModal').classList.contains('hidden');
+    }
+
+    async function refreshFromSheets() {
+      if (refreshing || inflight > 0) return;
+      refreshing = true;
+      try {
+        const seq = writeSeq;
+        const res = await fetch(`${APPS_SCRIPT_URL}?action=data&t=${Date.now()}`);
+        const data = await res.json();
+        if (data.status !== 'success' || !Array.isArray(data.sales)) throw new Error(data.message || 'respuesta inválida');
+        remoteReady = true;
+        setSyncStatus(true);
+        if (seq !== writeSeq || inflight > 0) return; // hubo cambios locales mientras se leía
+
+        // 1) Lo local pendiente se envía antes de aceptar lo remoto
+        if (fullSyncPending) {
+          if (await postToSheets({ action: 'syncAll', sales })) { fullSyncPending = false; outbox = []; persistSyncState(); }
+          else setSyncStatus(false);
+          return;
+        }
+        if (outbox.length) {
+          while (outbox.length && await postToSheets(outbox[0])) outbox.shift();
+          persistSyncState();
+          if (outbox.length) setSyncStatus(false);
+          return;
+        }
+        if (modalOpen()) return; // no pisar lo que se está editando
+
+        // 2) Catálogo: si la planilla no tiene uno (o hay cambios locales sin enviar), se sube el local
+        if (catalogPending || !data.catalog) {
+          if (await postToSheets({ action: 'saveCatalog', catalog })) { catalogPending = false; persistSyncState(); }
+        } else if (data.catalog && Array.isArray(data.catalog.products) && Array.isArray(data.catalog.promos)
+          && JSON.stringify(data.catalog) !== JSON.stringify(catalog)) {
+          catalog = data.catalog;
+          localStorage.setItem(CATALOG_KEY, JSON.stringify(catalog));
+          renderCatalog();
+        }
+
+        // 3) Ventas: la planilla manda
+        if (salesKey(data.sales) !== salesKey(sales)) {
+          sales = data.sales;
+          updateUI();
+        }
+      } catch (err) {
+        console.warn('No se pudo leer la planilla:', err);
+        setSyncStatus(false);
+      } finally {
+        refreshing = false;
+      }
     }
 
     let sales = JSON.parse(localStorage.getItem('bufet_sales_v2')) || [];
@@ -738,6 +867,7 @@
     function saveCatalog() {
       localStorage.setItem(CATALOG_KEY, JSON.stringify(catalog));
       renderCatalog();
+      pushCatalog();
     }
 
     function esc(text) {
@@ -854,6 +984,9 @@
     // Inicializar
     renderCatalog();
     updateUI();
+    refreshFromSheets();
+    setInterval(refreshFromSheets, POLL_MS);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshFromSheets(); });
     renderCurrentOrderUI();
   </script>
 </body>
